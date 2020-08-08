@@ -18,4 +18,10 @@ namespace PensionDisbursement
         Self=1,
         Family = 2
     }
+
+    public class Result
+    {
+        public string Message { get; set; }
+        public PensionerDetail result { get; set; }
+    }
 }

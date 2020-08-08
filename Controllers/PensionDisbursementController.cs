@@ -19,13 +19,24 @@ namespace PensionDisbursement.Controllers
     public class PensionDisbursementController : ControllerBase
     {
         public IConfiguration configuration;
+        /// <summary>
+        /// Dependency Injection
+        /// </summary>
+        /// <param name="iConfig"></param>
         public PensionDisbursementController(IConfiguration iConfig)
         {
             configuration = iConfig;
         }
+        static readonly log4net.ILog _log4net = log4net.LogManager.GetLogger(typeof(PensionDisbursementController));
+        /// <summary>
+        /// Getting the values from Process Pension Microservice
+        /// </summary>
+        /// <param name="pension"></param>
+        /// <returns>Status Code</returns>
         [HttpPost]
         public int GetDisbursePension(ProcessPensionInput pension)
         {
+            _log4net.Info("Pension Amount is Being Validated");
             PensionerDetail pensionerDetail = new PensionerDetail();
             ServiceWrapper getPensionerDetail = new ServiceWrapper(configuration);
 
@@ -57,6 +68,14 @@ namespace PensionDisbursement.Controllers
             return status;
             
         }
+        /// <summary>
+        /// Validating the Pension Amount
+        /// </summary>
+        /// <param name="salaryEarned"></param>
+        /// <param name="allowances"></param>
+        /// <param name="charge"></param>
+        /// <param name="type"></param>
+        /// <returns>validated pension amount</returns>
         private double CalculatePensionLogic(int salaryEarned,int allowances,int charge,PensionType type)
         {
             if (type == PensionType.Self)

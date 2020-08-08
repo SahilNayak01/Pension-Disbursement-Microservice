@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using AutoWrapper;
 
 namespace PensionDisbursement
 {
@@ -53,7 +54,7 @@ namespace PensionDisbursement
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -69,6 +70,10 @@ namespace PensionDisbursement
             });
 
             app.UseHttpsRedirection();
+
+            app.UseApiResponseAndExceptionWrapper();
+
+            loggerFactory.AddLog4Net();
 
             app.UseRouting();
 

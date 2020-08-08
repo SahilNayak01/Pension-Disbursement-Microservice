@@ -11,6 +11,7 @@ namespace PensionDisbursement
 {
     public class ServiceWrapper
     {
+        static readonly log4net.ILog _log4net = log4net.LogManager.GetLogger(typeof(ServiceWrapper));
         private IConfiguration configuration;
         /// <summary>
         /// Dependency Injection
@@ -26,8 +27,7 @@ namespace PensionDisbursement
         /// <param name="aadhar"></param>
         /// <returns>Status Code</returns>
         public PensionerDetail GetDetailResponse(string aadhar)
-        {
-           
+        {      
             HttpResponseMessage response = new HttpResponseMessage();
             string uriLink = configuration.GetValue<string>("Disbursementkey:UriLinkValue");
             using (var client = new HttpClient())
@@ -39,15 +39,22 @@ namespace PensionDisbursement
                 {
                     response = client.GetAsync("api/PensionerDetail/" + aadhar).Result;
                 }
-                catch (Exception e) { response = null; }
+                catch (Exception error) 
+                {
+                    _log4net.Error("Exception Occured" + error);
+
+                    response = null; 
+                }
             }
 
+            if (response == null)
+            {
+                
+                return null;
+            }
             string detailsResponse = response.Content.ReadAsStringAsync().Result;
-            PensionerDetail pen = JsonConvert.DeserializeObject<PensionerDetail>(detailsResponse);
-            
-            return pen;
-        }
-
-       
+            Result pen = JsonConvert.DeserializeObject<Result>(detailsResponse);           
+            return pen.result;
+        }   
     }
 }
