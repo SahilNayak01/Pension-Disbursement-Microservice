@@ -1,0 +1,34 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pensiondis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: PensionDisbursement   
+  template:
+    metadata:
+      labels:
+        app: PensionDisbursement
+    spec:
+      containers:
+      - name: pensiondisbursement
+        image: pensionmanagementcr.azurecr.io/pensiondisbursementrepos:latest
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: pensiondisbursementsn
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pensiondisbursement
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: PensionDisbursement
